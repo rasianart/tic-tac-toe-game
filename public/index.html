@@ -1,10 +1,41 @@
 <html>
     <head>
-        <link rel="stylesheet" href="index.css">
+        <link rel="stylesheet" href="/style.css" />
         <script src="/socket.io/socket.io.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     </head>
     <body>
+        <div v-cloak id="container">
+            <div id="game-title">Tic Tac Toe Game</div>
+            <div id="game-start" v-if="initGame">
+                <button id="new-game" v-on:click="newGame">New Game</button>
+                <input
+                    id="join-game"
+                    v-on:click="joinGame"
+                    placeholder="Enter Game ID"
+                />
+            </div>
+            <div id="status">{{status}}</div>
+            <div id="game-board" v-if="gameCreated">
+                <table>
+                    <tr id="row1">
+                        <td class="cell" id="cell-0"></td>
+                        <td class="cell" id="cell-1"></td>
+                        <td class="cell" id="cell-2"></td>
+                    </tr>
+                    <tr id="row2">
+                        <td class="cell" id="cell-3"></td>
+                        <td class="cell" id="cell-4"></td>
+                        <td class="cell" id="cell-5"></td>
+                    </tr>
+                    <tr id="row3">
+                        <td class="cell" id="cell-6"></td>
+                        <td class="cell" id="cell-7"></td>
+                        <td class="cell" id="cell-8"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="clientApp.js"></script>
     </body>
 </html>
