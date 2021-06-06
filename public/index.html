@@ -19,19 +19,73 @@
             <div id="game-board" v-if="gameCreated">
                 <table>
                     <tr id="row1">
-                        <td class="cell" id="cell-0"></td>
-                        <td class="cell" id="cell-1"></td>
-                        <td class="cell" id="cell-2"></td>
+                        <td
+                            class="cell"
+                            id="cell-0"
+                            v-on:click="selectSquare('0')"
+                        >
+                            {{board['0']}}
+                        </td>
+                        <td
+                            class="cell"
+                            id="cell-1"
+                            v-on:click="selectSquare('1')"
+                        >
+                            {{board['1']}}
+                        </td>
+                        <td
+                            class="cell"
+                            id="cell-2"
+                            v-on:click="selectSquare('2')"
+                        >
+                            {{board['2']}}
+                        </td>
                     </tr>
                     <tr id="row2">
-                        <td class="cell" id="cell-3"></td>
-                        <td class="cell" id="cell-4"></td>
-                        <td class="cell" id="cell-5"></td>
+                        <td
+                            class="cell"
+                            id="cell-3"
+                            v-on:click="selectSquare('3')"
+                        >
+                            {{board['3']}}
+                        </td>
+                        <td
+                            class="cell"
+                            id="cell-4"
+                            v-on:click="selectSquare('4')"
+                        >
+                            {{board['4']}}
+                        </td>
+                        <td
+                            class="cell"
+                            id="cell-5"
+                            v-on:click="selectSquare('5')"
+                        >
+                            {{board['5']}}
+                        </td>
                     </tr>
                     <tr id="row3">
-                        <td class="cell" id="cell-6"></td>
-                        <td class="cell" id="cell-7"></td>
-                        <td class="cell" id="cell-8"></td>
+                        <td
+                            class="cell"
+                            id="cell-6"
+                            v-on:click="selectSquare('6')"
+                        >
+                            {{board['6']}}
+                        </td>
+                        <td
+                            class="cell"
+                            id="cell-7"
+                            v-on:click="selectSquare('7')"
+                        >
+                            {{board['7']}}
+                        </td>
+                        <td
+                            class="cell"
+                            id="cell-8"
+                            v-on:click="selectSquare('8')"
+                        >
+                            {{board['8']}}
+                        </td>
                     </tr>
                 </table>
             </div>

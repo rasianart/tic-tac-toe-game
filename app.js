@@ -55,14 +55,14 @@ class Game {
     addPlayer(playerID) {
         // checks to see if any player exists
         if (!this.player1) {
-            this.player1 = new Player(playerID);
+            this.player1 = new Player(playerID, "x", true);
         } else {
-            this.player2 = new Player(playerID);
+            this.player2 = new Player(playerID, "o", false);
         }
     }
     // Checks if the square is avalailable and if it is the player's turn
     checkIfSquareAvailable(square, player) {
-        if (player.turn && this.board.square === "") {
+        if (player.turn && this.board[square] === "") {
             return true;
         } else {
             return false;
@@ -77,6 +77,7 @@ class Game {
     // Checks for game win
     checkGameWin(player) {
         // TODO: add check for win/tie
+        return false;
     }
 }
 
@@ -145,7 +146,7 @@ io.on("connection", (socket) => {
             gameContainer[gameID].selectSquare(data.square, data.player);
 
             // Checks if there is a win or tie on the game board
-            const gameStatus = gameContainer[gameID].checkGameWin(player);
+            const gameStatus = gameContainer[gameID].checkGameWin(data.player);
 
             if (gameStatus === "win") {
                 // Send game data to room/other player
@@ -162,12 +163,6 @@ io.on("connection", (socket) => {
                 // No win yet, game still ongoing
                 // Send game data to room
                 io.to(gameID).emit("nextTurn", {
-                    board: gameContainer[gameID].board,
-                });
-
-                // Send game data to the current socket/player
-                socket.emit("nextTurn", {
-                    player: data.player,
                     board: gameContainer[gameID].board,
                 });
             }
