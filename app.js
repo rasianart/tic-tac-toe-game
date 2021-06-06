@@ -68,6 +68,16 @@ class Game {
             return false;
         }
     }
+    // Selects valid square on board
+    selectSquare(square, player) {
+        this.board[square] = player.assignment;
+        this.player1.turn = !this.player1.turn;
+        this.player2.turn = !this.player2.turn;
+    }
+    // Checks for game win
+    checkGameWin(player) {
+        // TODO: add check for win/tie
+    }
 }
 
 io.on("connection", (socket) => {
@@ -123,17 +133,47 @@ io.on("connection", (socket) => {
     });
 
     // Called when a player selects a square of the board
-    socket.on("select", function (data) {
+    socket.on("selectSquare", function (data) {
         // Make sure it is a valid move
-        let gameID = data.id;
+        let gameID = data.gameID;
         let validSquare = gameContainer[gameID].checkIfSquareAvailable(
             data.square,
             data.player
         );
         if (validSquare) {
+            // Select square on game board and switches turns
+            gameContainer[gameID].selectSquare(data.square, data.player);
+
+            // Checks if there is a win or tie on the game board
+            const gameStatus = gameContainer[gameID].checkGameWin(player);
+
+            if (gameStatus === "win") {
+                // Send game data to room/other player
+                io.to(gameID).emit("gameOver", {
+                    board: gameContainer[gameID].board,
+                });
+
+                // Send game data to the current socket/player winner
+                socket.emit("winGame", {
+                    player: data.player,
+                    board: gameContainer[gameID].board,
+                });
+            } else {
+                // No win yet, game still ongoing
+                // Send game data to room
+                io.to(gameID).emit("nextTurn", {
+                    board: gameContainer[gameID].board,
+                });
+
+                // Send game data to the current socket/player
+                socket.emit("nextTurn", {
+                    player: data.player,
+                    board: gameContainer[gameID].board,
+                });
+            }
         } else {
             // Emit invalid move
-            socket.emit("invalid");
+            socket.emit("Invalid square.");
         }
     });
 });

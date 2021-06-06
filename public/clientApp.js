@@ -11,6 +11,7 @@ const gameContainer = new Vue({
         gameID: null,
         board: null,
         yourPlayer: null,
+        selectedSquare: null,
     },
     methods: {
         // Socket emission upon new game click
@@ -27,6 +28,16 @@ const gameContainer = new Vue({
                 gameContainer.status = "Must input game ID.";
             }
         },
+        // Checks if valid turn and square then emits move
+        selectSquare: function () {
+            if (this.player.turn && this.board[this.selectedSquare] === "") {
+                socket.emit("selectSquare", {
+                    gameID: this.gameID.toString(),
+                    player: this.yourPlayer,
+                    square: this.selectedSquare,
+                });
+            }
+        },
     },
 });
 
@@ -35,6 +46,8 @@ socket.on("gameCreated", (data) => {
     console.log(data);
     // Display the create game ID to share with other player
     gameContainer.status = `Share game ID with another player to begin: ${data.gameID}`;
+    // Sets you up as first player
+    gameContainer.turn = true;
 });
 
 // Called when both players have joined the game
@@ -48,8 +61,13 @@ socket.on("startGame", function (data) {
     gameContainer.board = data.board;
     gameContainer.yourPlayer = data.player;
 
-    console.log(gameContainer);
-
     // Show the game board
     gameContainer.gameCreated = true;
+});
+
+// Called when square has been selected and next players turn
+socket.on("nextTurn", function (data) {
+    // Updates the board
+    gameContainer.board = data.board;
+    gameContainer.yourPlayer.turn = !gameContainer.yourPlayer.turn;
 });
