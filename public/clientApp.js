@@ -29,13 +29,17 @@ const gameContainer = new Vue({
         },
         // Checks if valid turn and square then emits move
         selectSquare: function (selectedSquare) {
+            // Resets game status
+            gameContainer.status = "";
             if (this.yourPlayer.turn && this.board[selectedSquare] === "") {
-                console.log("hit");
                 socket.emit("selectSquare", {
                     gameID: this.gameID.toString(),
                     player: this.yourPlayer,
                     square: selectedSquare,
                 });
+            } else {
+                // Invalid move
+                gameContainer.status = "Invalid move.";
             }
         },
     },
@@ -70,6 +74,4 @@ socket.on("nextTurn", function (data) {
     // Updates the board
     gameContainer.board = data.board;
     gameContainer.yourPlayer.turn = !gameContainer.yourPlayer.turn;
-
-    console.log(gameContainer);
 });
