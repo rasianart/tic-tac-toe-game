@@ -20,8 +20,8 @@ body {
 }
 
 .cell {
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 130px;
     background-color: grey;
     font-size: 65px;
     padding: 0px;
@@ -29,5 +29,5 @@ body {
 }
 
 [v-cloak] {
-    display: none;
+    display: none !important;
 }

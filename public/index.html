@@ -4,13 +4,14 @@
         <script src="/socket.io/socket.io.js"></script>
     </head>
     <body>
-        <div v-cloak id="container">
+        <div id="container" v-cloak>
             <div id="game-title">Tic Tac Toe Game</div>
             <div id="game-start" v-if="initGame">
                 <button id="new-game" v-on:click="newGame">New Game</button>
                 <input
                     id="join-game"
-                    v-on:click="joinGame"
+                    v-on:keyup.enter="joinGame"
+                    v-model="gameID"
                     placeholder="Enter Game ID"
                 />
             </div>

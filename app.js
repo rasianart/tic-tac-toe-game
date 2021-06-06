@@ -1,6 +1,6 @@
-//
 // Tic-Tac-Toe NodeJS/Express/Socket.io Server
-//
+
+"use strict";
 
 // Set up express server w/socket.io
 const express = require("express");
@@ -25,8 +25,10 @@ let gameContainer = {};
 
 // Class for information about each player
 class Player {
-    constructor(playerID) {
-        this.playerID = playerID;
+    constructor(playerID, assignment, turn) {
+        this.playerID = playerID; // ID of the player
+        this.assignment = assignment; // Holds the assignment of either 'x' or 'o'
+        this.turn = turn; // Holds the turn of the player
     }
 }
 
@@ -49,6 +51,7 @@ class Game {
             8: "",
         };
     }
+    // Add player to game
     addPlayer(playerID) {
         // checks to see if any player exists
         if (!this.player1) {
@@ -57,23 +60,31 @@ class Game {
             this.player2 = new Player(playerID);
         }
     }
+    // Checks if the square is avalailable and if it is the player's turn
+    checkIfSquareAvailable(square, player) {
+        if (player.turn && this.board.square === "") {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 io.on("connection", (socket) => {
-    console.log(socket.id);
-
     // Called when a user creates a new game
     socket.on("newGame", () => {
         // Creates ID to be passed to other player upon game creation
-        let gameID = Math.floor(Math.random() * 100 + 1);
+        let gameID = Math.random().toString(36).substr(2, 3);
 
         // Instantiates a new game with the generated gameID
         gameContainer[gameID] = new Game(gameID);
+
         // Intantiates a new player to the new game
         gameContainer[gameID].addPlayer(socket.id);
 
         // Adds the gameID to the socket room
         socket.join(gameID);
+
         // Sends created game ID back to new player to share
         io.to(gameID).emit("gameCreated", {
             gameID: gameID,
@@ -89,7 +100,7 @@ io.on("connection", (socket) => {
             // Add player to the game
             gameContainer[gameID].addPlayer(socket.id);
 
-            // Join lobby
+            // Joins room
             socket.join(gameID);
 
             // Send game data to the first player
@@ -100,7 +111,7 @@ io.on("connection", (socket) => {
             });
 
             // Send game data to the second player
-            io.to(gameID).emit("startGame", {
+            socket.emit("startGame", {
                 player: gameContainer[gameID].player2,
                 gameID: gameID,
                 board: gameContainer[gameID].board,
@@ -108,6 +119,21 @@ io.on("connection", (socket) => {
         } else {
             // The player attempted to enter a gameID that does not exist
             socket.emit("invalidGame");
+        }
+    });
+
+    // Called when a player selects a square of the board
+    socket.on("select", function (data) {
+        // Make sure it is a valid move
+        let gameID = data.id;
+        let validSquare = gameContainer[gameID].checkIfSquareAvailable(
+            data.square,
+            data.player
+        );
+        if (validSquare) {
+        } else {
+            // Emit invalid move
+            socket.emit("invalid");
         }
     });
 });
