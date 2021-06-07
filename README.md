@@ -20,7 +20,10 @@ npm install -> npm start
 ### Future Improvements/Features
 
 -   Improved UI design of game board and selection
--   Ask for new game after completion
--   Ability to quit/restart
+    -   Custom transitions, themes, instructions
+-   Game completion options
+    -   Implement ability to restart, quit, or play again
 -   Unit test coverage
+    -   Implement testing framework (Mocha) for full code coverage
 -   Host application online
+    -   Connect application github repo to Heroku for online connectivity
