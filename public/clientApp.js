@@ -51,11 +51,16 @@ const gameContainer = new Vue({
 
 // Called when game has been created
 socket.on("gameCreated", (data) => {
-    console.log(data);
     // Display the create game ID to share with other player
     gameContainer.status = `Share game ID with another player to begin: ${data.gameID}`;
     // Sets you up as first player
     gameContainer.turn = true;
+});
+
+// Called when gameID is invalid
+socket.on("invalidGame", (data) => {
+    // Displays a notification of invalid id
+    gameContainer.status = `Invalid Game ID`;
 });
 
 // Called when both players have joined the game
