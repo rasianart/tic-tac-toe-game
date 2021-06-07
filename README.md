@@ -6,6 +6,8 @@ Play the classic board game on the web!
 
 npm install -> npm start
 
+Navigate to 'http:/localhost:8000' (or specified port) in browser.
+
 ### To Begin:
 
 -   'New Game': Creates new game room and generates a game ID. Use this ID to share with another player. Other player will join by entering this ID.
