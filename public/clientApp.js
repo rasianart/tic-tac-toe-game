@@ -37,9 +37,13 @@ const gameContainer = new Vue({
                     player: this.yourPlayer,
                     square: selectedSquare,
                 });
+            } else if (!this.yourPlayer.turn) {
+                // Other palyler's turn
+                gameContainer.status =
+                    "Wait until other player selects before you select.";
             } else {
-                // Invalid move
-                gameContainer.status = "Invalid move.";
+                // Invalid selection
+                gameContainer.status = "Invalid selection.";
             }
         },
     },
@@ -72,6 +76,29 @@ socket.on("startGame", function (data) {
 // Called when square has been selected and next players turn
 socket.on("nextTurn", function (data) {
     // Updates the board
+    gameContainer.board = data.board;
+    gameContainer.yourPlayer.turn = !gameContainer.yourPlayer.turn;
+});
+
+// Called when game is lost and restarts
+socket.on("gameOver", function (data) {
+    // Restarts the board
+    gameContainer.status = "You have lost the game.";
+    gameContainer.board = data.board;
+    gameContainer.yourPlayer.turn = !gameContainer.yourPlayer.turn;
+});
+
+// Called when game is won and restarts
+socket.on("winGame", function (data) {
+    // Restarts the board
+    gameContainer.status = "You have won the game.";
+    gameContainer.board = data.board;
+});
+
+// Called when game is a tie and game restarts
+socket.on("tieGame", function (data) {
+    // Restarts the board
+    gameContainer.status = "Tie Game.";
     gameContainer.board = data.board;
     gameContainer.yourPlayer.turn = !gameContainer.yourPlayer.turn;
 });

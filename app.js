@@ -76,8 +76,92 @@ class Game {
     }
     // Checks for game win
     checkGameWin(player) {
-        // TODO: add check for win/tie
-        return false;
+        const boardCheck = this.board;
+
+        // Check all horizontal rows for win
+        if (
+            boardCheck[0] &&
+            boardCheck[0] === boardCheck[1] &&
+            boardCheck[0] === boardCheck[2]
+        ) {
+            return "win";
+        }
+        if (
+            boardCheck[3] &&
+            boardCheck[3] === boardCheck[4] &&
+            boardCheck[3] === boardCheck[5]
+        ) {
+            return "win";
+        }
+        if (
+            boardCheck[6] &&
+            boardCheck[6] === boardCheck[7] &&
+            boardCheck[6] === boardCheck[8]
+        ) {
+            return "win";
+        }
+
+        // Check all vertical rows for win
+        if (
+            boardCheck[0] &&
+            boardCheck[0] === boardCheck[3] &&
+            boardCheck[0] === boardCheck[6]
+        ) {
+            return "win";
+        }
+        if (
+            boardCheck[1] &&
+            boardCheck[1] === boardCheck[4] &&
+            boardCheck[1] === boardCheck[7]
+        ) {
+            return "win";
+        }
+        if (
+            boardCheck[2] &&
+            boardCheck[2] === boardCheck[5] &&
+            boardCheck[2] === boardCheck[8]
+        ) {
+            return "win";
+        }
+
+        // Check all diagonals for win
+        if (
+            boardCheck[0] &&
+            boardCheck[0] === boardCheck[4] &&
+            boardCheck[0] === boardCheck[8]
+        ) {
+            return "win";
+        }
+        if (
+            boardCheck[2] &&
+            boardCheck[2] === boardCheck[4] &&
+            boardCheck[1] === boardCheck[6]
+        ) {
+            return "win";
+        }
+
+        // Checks to see if any squares are still empty to continue game
+        for (let square in boardCheck) {
+            if (!boardCheck[square]) {
+                return "continue";
+            }
+        }
+
+        // If no win and no squares left - game is a tie
+        return "tie";
+    }
+    resetBoard() {
+        this.board = {
+            0: "",
+            1: "",
+            2: "",
+            3: "",
+            4: "",
+            5: "",
+            6: "",
+            7: "",
+            8: "",
+        };
     }
 }
 
@@ -149,6 +233,9 @@ io.on("connection", (socket) => {
             const gameStatus = gameContainer[gameID].checkGameWin(data.player);
 
             if (gameStatus === "win") {
+                // Reset board
+                gameContainer[gameID].resetBoard();
+
                 // Send game data to room/other player
                 io.to(gameID).emit("gameOver", {
                     board: gameContainer[gameID].board,
@@ -156,10 +243,19 @@ io.on("connection", (socket) => {
 
                 // Send game data to the current socket/player winner
                 socket.emit("winGame", {
-                    player: data.player,
                     board: gameContainer[gameID].board,
                 });
-            } else {
+            } else if (gameStatus === "tie") {
+                // Tie game, no win
+
+                // Reset board
+                gameContainer[gameID].resetBoard();
+
+                // Send game data to room
+                io.to(gameID).emit("tieGame", {
+                    board: gameContainer[gameID].board,
+                });
+            } else if (gameStatus === "continue") {
                 // No win yet, game still ongoing
                 // Send game data to room
                 io.to(gameID).emit("nextTurn", {

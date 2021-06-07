@@ -22,10 +22,14 @@ body {
 .cell {
     width: 130px;
     height: 130px;
-    background-color: grey;
+    background-color: lightgrey;
     font-size: 65px;
     padding: 0px;
     margin: 0px;
+}
+
+.row {
+    text-align: center;
 }
 
 [v-cloak] {
